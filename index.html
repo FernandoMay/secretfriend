@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Secreto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .friends-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 100px;
+            border: 2px dashed #ddd;
+        }
+
+        .friends-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .friend-item {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .friend-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .remove-btn:hover {
+            background: #ff3742;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #2ed573 0%, #17a085 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .empty-state {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎁 Amigo Secreto</h1>
+        <p class="subtitle">¡Organiza tu intercambio de regalos de forma divertida!</p>
+        
+        <div class="input-section">
+            <input type="text" id="friendInput" class="input-field" placeholder="Escribe el nombre de un amigo..." maxlength="50">
+            <br>
+            <button onclick="addFriend()" class="btn">➕ Agregar Amigo</button>
+            <button onclick="drawSecret()" class="btn btn-secondary">🎲 Sortear Amigo</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="friendCount">0</div>
+                <div class="stat-label">Amigos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="drawCount">0</div>
+                <div class="stat-label">Sorteos</div>
+            </div>
+        </div>
+
+        <div class="friends-list">
+            <h3>📝 Lista de Amigos</h3>
+            <div id="friendsList">
+                <div class="empty-state">
+                    No hay amigos agregados aún. ¡Comienza agregando algunos nombres!
+                </div>
+            </div>
+        </div>
+
+        <div id="result"></div>
+
+        <button onclick="clearAll()" class="btn" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%); margin-top: 10px;">
+            🗑️ Limpiar Todo
+        </button>
+    </div>
+
+    <script>
+        // Variables globales para manejar el estado de la aplicación
+        let friends = [];
+        let drawHistory = [];
+        let totalDraws = 0;
+
+        // Función para agregar un amigo a la lista
+        function addFriend() {
+            const input = document.getElementById('friendInput');
+            const name = input.value.trim();
+            
+            // Validaciones
+            if (name === '') {
+                showError('⚠️ Por favor, ingresa un nombre válido');
+                return;
+            }
+            
+            if (name.length < 2) {
+                showError('⚠️ El nombre debe tener al menos 2 caracteres');
+                return;
+            }
+            
+            if (friends.includes(name)) {
+                showError('⚠️ Este amigo ya está en la lista');
+                return;
+            }
+            
+            if (friends.length >= 20) {
+                showError('⚠️ Máximo 20 amigos permitidos');
+                return;
+            }
+            
+            // Agregar el amigo a la lista
+            friends.push(name);
+            input.value = '';
+            
+            // Actualizar la interfaz
+            updateFriendsList();
+            updateStats();
+            clearMessages();
+            
+            // Mensaje de confirmación
+            showSuccess(`✅ ${name} ha sido agregado exitosamente`);
+        }
+
+        // Función para realizar el sorteo del amigo secreto
+        function drawSecret() {
+            // Validar que hay suficientes amigos
+            if (friends.length < 2) {
+                showError('⚠️ Necesitas al menos 2 amigos para hacer el sorteo');
+                return;
+            }
+            
+            // Crear una copia del array para no modificar el original
+            const availableFriends = [...friends];
+            
+            // Generar número aleatorio para seleccionar un amigo
+            const randomIndex = Math.floor(Math.random() * availableFriends.length);
+            const selectedFriend = availableFriends[randomIndex];
+            
+            // Registrar el sorteo en el historial
+            drawHistory.push({
+                friend: selectedFriend,
+                timestamp: new Date().toLocaleString(),
+                participants: friends.length
+            });
+            
+            totalDraws++;
+            
+            // Mostrar el resultado
+            showResult(`🎉 ¡El amigo secreto seleccionado es: <strong>${selectedFriend}</strong>!`);
+            updateStats();
+        }
+
+        // Función para actualizar la lista visual de amigos
+        function updateFriendsList() {
+            const friendsList = document.getElementById('friendsList');
+            
+            if (friends.length === 0) {
+                friendsList.innerHTML = '<div class="empty-state">No hay amigos agregados aún. ¡Comienza agregando algunos nombres!</div>';
+                return;
+            }
+            
+            // Generar HTML para cada amigo
+            const friendsHTML = friends.map((friend, index) => `
+                <div class="friend-item">
+                    <span class="friend-name">${friend}</span>
+                    <button class="remove-btn" onclick="removeFriend(${index})">❌</button>
+                </div>
+            `).join('');
+            
+            friendsList.innerHTML = friendsHTML;
+        }
+
+        // Función para remover un amigo de la lista
+        function removeFriend(index) {
+            const removedFriend = friends[index];
+            friends.splice(index, 1);
+            updateFriendsList();
+            updateStats();
+            showSuccess(`🗑️ ${removedFriend} ha sido eliminado de la lista`);
+        }
+
+        // Función para mostrar mensajes de error
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="error">${message}</div>`;
+            
+            // Auto-limpiar después de 3 segundos
+            setTimeout(clearMessages, 3000);
+        }
+
+        // Función para mostrar mensajes de éxito
+        function showSuccess(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result" style="background: linear-gradient(135deg, #2ed573 0%, #17a085 100%);">${message}</div>`;
+            
+            // Auto-limpiar después de 3 segundos
+            setTimeout(clearMessages, 3000);
+        }
+
+        // Función para mostrar el resultado del sorteo
+        function showResult(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result">${message}</div>`;
+        }
+
+        // Función para limpiar mensajes
+        function clearMessages() {
+            setTimeout(() => {
+                const resultDiv = document.getElementById('result');
+                if (resultDiv.innerHTML.includes('error') || resultDiv.innerHTML.includes('agregado') || resultDiv.innerHTML.includes('eliminado')) {
+                    resultDiv.innerHTML = '';
+                }
+            }, 3000);
+        }
+
+        // Función para actualizar las estadísticas
+        function updateStats() {
+            document.getElementById('friendCount').textContent = friends.length;
+            document.getElementById('drawCount').textContent = totalDraws;
+        }
+
+        // Función para limpiar todo
+        function clearAll() {
+            if (friends.length === 0 && totalDraws === 0) {
+                showError('⚠️ No hay nada que limpiar');
+                return;
+            }
+            
+            if (confirm('¿Estás seguro de que quieres limpiar todo? Esta acción no se puede deshacer.')) {
+                friends = [];
+                drawHistory = [];
+                totalDraws = 0;
+                updateFriendsList();
+                updateStats();
+                document.getElementById('result').innerHTML = '';
+                showSuccess('🧹 Todo ha sido limpiado exitosamente');
+            }
+        }
+
+        // Event listener para permitir agregar amigos con Enter
+        document.getElementById('friendInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addFriend();
+            }
+        });
+
+        // Event listener para enfocar el input al cargar la página
+        window.addEventListener('load', function() {
+            document.getElementById('friendInput').focus();
+        });
+
+        // Función para mostrar el historial (funcionalidad extra)
+        function showHistory() {
+            if (drawHistory.length === 0) {
+                showError('⚠️ No hay sorteos realizados aún');
+                return;
+            }
+            
+            let historyHTML = '<h3>📊 Historial de Sorteos</h3>';
+            drawHistory.forEach((draw, index) => {
+                historyHTML += `
+                    <div class="friend-item">
+                        <span>${index + 1}. ${draw.friend} (${draw.participants} participantes)</span>
+                        <small>${draw.timestamp}</small>
+                    </div>
+                `;
+            });
+            
+            showResult(historyHTML);
+        }
+
+        // Función de validación avanzada para nombres
+        function validateName(name) {
+            // Verificar caracteres especiales no deseados
+            const invalidChars = /[<>\"'&]/;
+            if (invalidChars.test(name)) {
+                return 'El nombre contiene caracteres no válidos';
+            }
+            
+            // Verificar que no sea solo números
+            if (/^\d+$/.test(name)) {
+                return 'El nombre no puede ser solo números';
+            }
+            
+            return null; // Nombre válido
+        }
+
+        // Función para exportar la lista (funcionalidad extra)
+        function exportList() {
+            if (friends.length === 0) {
+                showError('⚠️ No hay amigos para exportar');
+                return;
+            }
+            
+            const exportData = {
+                friends: friends,
+                totalFriends: friends.length,
+                exportDate: new Date().toLocaleString(),
+                drawHistory: drawHistory
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'amigo-secreto-lista.json';
+            link.click();
+            
+            showSuccess('📥 Lista exportada exitosamente');
+        }
+
+        console.log('🎁 Aplicación Amigo Secreto cargada exitosamente!');
+        console.log('💡 Tip: Puedes usar las teclas del teclado para una experiencia más rápida');
+        console.log('📱 La aplicación es completamente responsive');
+    </script>
+</body>
+</html>
